@@ -56,15 +56,6 @@ class ESC_Widget_Student_Form extends \Elementor\Widget_Base {
 			'default' => __( 'Send My Request', 'elite-sports-connect' ),
 		] );
 
-		$this->add_control( 'show_location_field', [
-			'label'        => __( 'Show Location Field', 'elite-sports-connect' ),
-			'type'         => \Elementor\Controls_Manager::SWITCHER,
-			'label_on'     => __( 'Yes', 'elite-sports-connect' ),
-			'label_off'    => __( 'No', 'elite-sports-connect' ),
-			'return_value' => 'yes',
-			'default'      => 'yes',
-		] );
-
 		$this->end_controls_section();
 
 		// ── Style Tab: Card ───────────────────────────────────────────────────

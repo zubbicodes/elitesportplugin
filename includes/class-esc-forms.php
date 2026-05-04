@@ -63,7 +63,7 @@ class ESC_Forms {
 		$website    = esc_url_raw( wp_unslash( $_POST['esc_website']            ?? '' ) );
 
 		// 4. Required field validation.
-		$required = compact( 'name', 'email', 'sport', 'experience' );
+		$required = compact( 'name', 'email', 'location', 'sport', 'experience' );
 		foreach ( $required as $field => $value ) {
 			if ( empty( $value ) ) {
 				$this->redirect_with_error( 'Please fill in all required fields.' );
@@ -78,6 +78,10 @@ class ESC_Forms {
 		// Validate sport and experience against allowed lists.
 		if ( ! in_array( $sport, self::get_sports_list(), true ) ) {
 			$this->redirect_with_error( 'Invalid sport selection.' );
+			return;
+		}
+		if ( ! in_array( $location, self::get_counties_list(), true ) ) {
+			$this->redirect_with_error( 'Invalid county selection.' );
 			return;
 		}
 		if ( ! in_array( $experience, self::get_experience_levels(), true ) ) {
@@ -155,7 +159,7 @@ class ESC_Forms {
 		$looking_for   = sanitize_textarea_field( wp_unslash( $_POST['esc_looking_for']?? '' ) );
 
 		// 4. Required field validation.
-		foreach ( [ $name, $email, $sport ] as $val ) {
+		foreach ( [ $name, $email, $location, $sport ] as $val ) {
 			if ( empty( $val ) ) {
 				$this->redirect_with_error( 'Please fill in all required fields.' );
 				return;
@@ -167,6 +171,10 @@ class ESC_Forms {
 		}
 		if ( ! in_array( $sport, self::get_sports_list(), true ) ) {
 			$this->redirect_with_error( 'Invalid sport selection.' );
+			return;
+		}
+		if ( ! in_array( $location, self::get_counties_list(), true ) ) {
+			$this->redirect_with_error( 'Invalid county selection.' );
 			return;
 		}
 
@@ -323,6 +331,16 @@ class ESC_Forms {
 		return array_values( array_unique( array_filter( array_map( 'strval', $sports ) ) ) );
 	}
 
+	public static function get_counties_list(): array {
+		$counties = get_option( 'esc_counties_list', [] );
+
+		if ( ! is_array( $counties ) || empty( $counties ) ) {
+			$counties = self::get_default_counties_list();
+		}
+
+		return array_values( array_unique( array_filter( array_map( 'strval', $counties ) ) ) );
+	}
+
 	public static function get_default_sports_list(): array {
 		return [
 			'American Football',
@@ -347,6 +365,121 @@ class ESC_Forms {
 			'Volleyball',
 			'Wrestling',
 			'Other',
+		];
+	}
+
+	public static function get_default_counties_list(): array {
+		return [
+			'Bedfordshire',
+			'Berkshire',
+			'Bristol',
+			'Buckinghamshire',
+			'Cambridgeshire',
+			'Cheshire',
+			'Cornwall',
+			'County Durham',
+			'Cumbria',
+			'Derbyshire',
+			'Devon',
+			'Dorset',
+			'East Riding of Yorkshire',
+			'East Sussex',
+			'Essex',
+			'Gloucestershire',
+			'Greater London',
+			'Greater Manchester',
+			'Hampshire',
+			'Herefordshire',
+			'Hertfordshire',
+			'Isle of Wight',
+			'Kent',
+			'Lancashire',
+			'Leicestershire',
+			'Lincolnshire',
+			'Merseyside',
+			'Norfolk',
+			'North Somerset',
+			'North Yorkshire',
+			'Northamptonshire',
+			'Northumberland',
+			'Nottinghamshire',
+			'Oxfordshire',
+			'Rutland',
+			'Shropshire',
+			'Somerset',
+			'South Gloucestershire',
+			'South Yorkshire',
+			'Staffordshire',
+			'Suffolk',
+			'Surrey',
+			'Tyne & Wear',
+			'Warwickshire',
+			'West Midlands',
+			'West Sussex',
+			'West Yorkshire',
+			'Wiltshire',
+			'Worcestershire',
+			'Aberdeenshire',
+			'Angus',
+			'Argyll & Bute',
+			'Ayrshire',
+			'Banffshire',
+			'Berwickshire',
+			'Borders',
+			'Caithness',
+			'Clackmannanshire',
+			'Dumfries & Galloway',
+			'Dunbartonshire',
+			'East Ayrshire',
+			'East Dunbartonshire',
+			'East Lothian',
+			'East Renfrewshire',
+			'Fife',
+			'Highland',
+			'Inverclyde',
+			'Kincardineshire',
+			'Midlothian',
+			'Moray',
+			'North Ayrshire',
+			'North Lanarkshire',
+			'Orkney',
+			'Perth & Kinross',
+			'Renfrewshire',
+			'Shetland',
+			'South Ayrshire',
+			'South Lanarkshire',
+			'Stirlingshire',
+			'West Dunbartonshire',
+			'West Lothian',
+			'Western Isles',
+			'Blaenau Gwent',
+			'Bridgend',
+			'Caerphilly',
+			'Cardiff',
+			'Carmarthenshire',
+			'Ceredigion',
+			'Conwy',
+			'Denbighshire',
+			'Flintshire',
+			'Gwynedd',
+			'Isle of Anglesey',
+			'Merthyr Tydfil',
+			'Monmouthshire',
+			'Neath Port Talbot',
+			'Newport',
+			'Pembrokeshire',
+			'Powys',
+			'Rhondda Cynon Taff',
+			'Swansea',
+			'Torfaen',
+			'Vale of Glamorgan',
+			'Wrexham',
+			'Antrim',
+			'Armagh',
+			'Down',
+			'Fermanagh',
+			'Londonderry',
+			'Tyrone',
 		];
 	}
 
@@ -382,6 +515,10 @@ class ESC_Forms {
 	public static function register_defaults(): void {
 		if ( false === get_option( 'esc_sports_list', false ) ) {
 			add_option( 'esc_sports_list', self::get_default_sports_list() );
+		}
+
+		if ( false === get_option( 'esc_counties_list', false ) ) {
+			add_option( 'esc_counties_list', self::get_default_counties_list() );
 		}
 
 		if ( false === get_option( 'esc_enable_coach_form', false ) ) {

@@ -84,6 +84,15 @@ class ESC_Widget_Directory extends \Elementor\Widget_Base {
 			'default'      => 'yes',
 		] );
 
+		$this->add_control( 'county_filter', [
+			'label'        => __( 'Show County Filter Bar', 'elite-sports-connect' ),
+			'type'         => \Elementor\Controls_Manager::SWITCHER,
+			'label_on'     => __( 'Yes', 'elite-sports-connect' ),
+			'label_off'    => __( 'No', 'elite-sports-connect' ),
+			'return_value' => 'yes',
+			'default'      => 'yes',
+		] );
+
 		$this->add_control( 'show_contact_button', [
 			'label'        => __( 'Show Contact Button', 'elite-sports-connect' ),
 			'type'         => \Elementor\Controls_Manager::SWITCHER,
@@ -164,11 +173,12 @@ class ESC_Widget_Directory extends \Elementor\Widget_Base {
 	protected function render(): void {
 		$settings = $this->get_settings_for_display();
 		echo do_shortcode( sprintf(
-			'[directory_coaches title="%s" posts_per_page="%d" columns="%s" sport_filter="%s" layout="%s" show_contact="%s"]',
+			'[directory_coaches title="%s" posts_per_page="%d" columns="%s" sport_filter="%s" county_filter="%s" layout="%s" show_contact="%s"]',
 			esc_attr( $settings['section_title'] ),
 			absint( $settings['posts_per_page'] ),
 			esc_attr( $settings['columns'] ),
 			esc_attr( $settings['sport_filter'] ),
+			esc_attr( $settings['county_filter'] ),
 			esc_attr( $settings['layout'] ),
 			esc_attr( $settings['show_contact_button'] )
 		) );

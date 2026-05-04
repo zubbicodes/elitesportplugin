@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $sports      = ESC_Forms::get_sports_list();
+$counties    = ESC_Forms::get_counties_list();
 // Post to wp-admin/admin-post.php — WordPress's dedicated form handler endpoint.
 $action_url  = esc_url( admin_url( 'admin-post.php' ) );
 
@@ -147,18 +148,19 @@ $is_enabled  = ESC_Forms::is_form_enabled( 'student' );
 
 					<div class="esc-form__group">
 						<label class="esc-form__label" for="esc_location">
-							<?php esc_html_e( 'Your Location', 'elite-sports-connect' ); ?>
+							<?php esc_html_e( 'County', 'elite-sports-connect' ); ?>
+							<span class="esc-required" aria-hidden="true">*</span>
 						</label>
-						<div class="esc-form__input-wrap">
+						<div class="esc-form__input-wrap esc-form__input-wrap--select">
 							<span class="esc-form__input-icon">
 								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
 							</span>
-							<input class="esc-form__input"
-							       type="text"
-							       id="esc_location"
-							       name="esc_location"
-							       placeholder="<?php esc_attr_e( 'Los Angeles, CA', 'elite-sports-connect' ); ?>"
-							       value="<?php echo esc_attr( $_POST['esc_location'] ?? '' ); ?>">
+							<select class="esc-form__select" id="esc_location" name="esc_location" required>
+								<option value=""><?php esc_html_e( 'Select your county', 'elite-sports-connect' ); ?></option>
+								<?php foreach ( $counties as $county ) : ?>
+									<option value="<?php echo esc_attr( $county ); ?>" <?php selected( $_POST['esc_location'] ?? '', $county ); ?>><?php echo esc_html( $county ); ?></option>
+								<?php endforeach; ?>
+							</select>
 						</div>
 					</div>
 				</div>

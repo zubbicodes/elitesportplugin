@@ -56,6 +56,7 @@ class ESC_Shortcodes {
 		$atts = shortcode_atts( [
 			'posts_per_page' => 12,
 			'sport_filter'   => 'yes',
+			'county_filter'  => 'yes',
 			'columns'        => 3,
 			'title'          => __( 'Our Coaching Team', 'elite-sports-connect' ),
 			'layout'         => 'feature',
@@ -71,6 +72,9 @@ class ESC_Shortcodes {
 		$active_sport = isset( $_GET['esc_sport'] )
 			? sanitize_text_field( wp_unslash( $_GET['esc_sport'] ) )
 			: '';
+		$active_county = isset( $_GET['esc_county'] )
+			? sanitize_text_field( wp_unslash( $_GET['esc_county'] ) )
+			: '';
 
 		$query_args = [
 			'post_type'      => 'coach',
@@ -81,13 +85,27 @@ class ESC_Shortcodes {
 			'order'          => 'ASC',
 		];
 
+		$meta_query = [];
+
 		if ( $active_sport && in_array( $active_sport, ESC_Forms::get_sports_list(), true ) ) {
-			$query_args['meta_query'] = [
-				[
-					'key'   => '_esc_sport',
-					'value' => $active_sport,
-				],
+			$meta_query[] = [
+				'key'   => '_esc_sport',
+				'value' => $active_sport,
 			];
+		}
+
+		if ( $active_county && in_array( $active_county, ESC_Forms::get_counties_list(), true ) ) {
+			$meta_query[] = [
+				'key'   => '_esc_location',
+				'value' => $active_county,
+			];
+		}
+
+		if ( ! empty( $meta_query ) ) {
+			if ( count( $meta_query ) > 1 ) {
+				$meta_query['relation'] = 'AND';
+			}
+			$query_args['meta_query'] = $meta_query;
 		}
 
 		$coaches = new WP_Query( $query_args );

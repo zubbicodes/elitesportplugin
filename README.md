@@ -77,7 +77,7 @@ Displays the coach registration form. Submissions are saved as `coach` posts wit
 | `subtitle` | *Connect with athletes…* | Sub-heading below the title |
 | `button_text` | *Submit Application* | Label on the submit button |
 
-**Fields collected:** Full Name, Email, Phone, City/Location, Postal Code, Sport (dropdown), Experience Level (radio), Bio, Profile Photo, Website (optional).
+**Fields collected:** Full Name, Email, Phone, County (dropdown), Postal Code, Sport (dropdown), Experience Level (radio), Bio, Profile Photo, Website (optional).
 
 ---
 
@@ -99,7 +99,7 @@ Displays the student lead form. Submissions are saved as `student_lead` posts wi
 | `subtitle` | *Tell us what you're looking for…* | Sub-heading |
 | `button_text` | *Send My Request* | Submit button label |
 
-**Fields collected:** Name, Email, Phone, Location, Preferred Sport (dropdown), Looking For (textarea).
+**Fields collected:** Name, Email, Phone, County (dropdown), Preferred Sport (dropdown), Looking For (textarea).
 
 ---
 
@@ -113,6 +113,7 @@ Displays the public coach grid. Only `publish` status coaches are shown.
   posts_per_page="12"
   columns="3"
   sport_filter="yes"
+  county_filter="yes"
 ]
 ```
 
@@ -122,8 +123,9 @@ Displays the public coach grid. Only `publish` status coaches are shown.
 | `posts_per_page` | `12` | Any number | Coaches shown per page |
 | `columns` | `3` | `1`, `2`, `3`, `4` | Grid columns (responsive on mobile) |
 | `sport_filter` | `yes` | `yes` / `no` | Show/hide the sport filter pill bar |
+| `county_filter` | `yes` | `yes` / `no` | Show/hide the county filter dropdown |
 
-**Tip:** The sport filter works via a URL query parameter (`?esc_sport=Basketball`), so it's bookmarkable and shareable.
+**Tip:** The sport and county filters work via URL query parameters (`?esc_sport=Tennis&esc_county=Kent`), so they're bookmarkable and shareable.
 
 ---
 
@@ -159,7 +161,7 @@ Found under **Elite Sports Connect → Find a Coach Form**.
 - Form Title
 - Form Subtitle
 - Submit Button Text
-- Show/Hide Location Field toggle
+- County dropdown using the plugin counties list
 
 **Style tab controls:**
 - Card background colour + padding + radius
@@ -275,7 +277,7 @@ The admin list view includes custom columns:
 | Coach Name | Post title |
 | Sport | `_esc_sport` meta |
 | Experience | `_esc_experience` meta |
-| Location | `_esc_location` meta |
+| County | `_esc_location` meta |
 | Email | `_esc_email` meta (clickable mailto) |
 | Submitted | Post date |
 
@@ -287,7 +289,7 @@ Each coach edit screen includes a **Coach Details** meta box with all custom fie
 |---|---|
 | Student Name | Post title |
 | Preferred Sport | `_esc_s_preferred_sport` meta |
-| Location | `_esc_s_location` meta |
+| County | `_esc_s_location` meta |
 | Email | `_esc_s_email` meta |
 | Phone | `_esc_s_phone` meta |
 | Submitted | Post date |

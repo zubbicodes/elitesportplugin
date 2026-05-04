@@ -260,22 +260,24 @@
      Sport Filter — smooth anchor scroll
      ========================================================================= */
   function initFilterBar() {
-    const bar = document.querySelector('.esc-filter-bar');
-    if (!bar) return;
+    const bars = document.querySelectorAll('.esc-filter-bar');
+    if (!bars.length) return;
 
-    // On page load with filter active, scroll the active pill into view within the bar.
-    const active = bar.querySelector('.esc-filter-bar__pill.is-active');
-    if (active && active.scrollIntoView) {
-      active.scrollIntoView({ inline: 'nearest', block: 'nearest' });
-    }
-
-    // Allow horizontal scroll on touch.
-    bar.addEventListener('wheel', function (e) {
-      if (e.deltaY !== 0) {
-        e.preventDefault();
-        bar.scrollLeft += e.deltaY;
+    bars.forEach(function (bar) {
+      // On page load with filter active, scroll the active pill into view within the bar.
+      const active = bar.querySelector('.esc-filter-bar__pill.is-active');
+      if (active && active.scrollIntoView) {
+        active.scrollIntoView({ inline: 'nearest', block: 'nearest' });
       }
-    }, { passive: false });
+
+      // Allow horizontal scroll on touch.
+      bar.addEventListener('wheel', function (e) {
+        if (e.deltaY !== 0) {
+          e.preventDefault();
+          bar.scrollLeft += e.deltaY;
+        }
+      }, { passive: false });
+    });
   }
 
   /* =========================================================================

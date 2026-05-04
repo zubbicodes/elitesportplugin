@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $sports        = ESC_Forms::get_sports_list();
+$counties      = ESC_Forms::get_counties_list();
 $columns_class = 'esc-grid--col-' . (int) $atts['columns'];
 $current_url   = strtok( $_SERVER['REQUEST_URI'] ?? '', '?' );
 $layout_class  = 'esc-directory--layout-' . $atts['layout'];
@@ -38,18 +39,44 @@ $show_contact  = ( 'no' !== ( $atts['show_contact'] ?? 'yes' ) );
 	</div>
 
 	<!-- ── Sport Filter Bar ─── -->
-	<?php if ( 'yes' === $atts['sport_filter'] ) : ?>
-		<div class="esc-filter-bar" role="navigation" aria-label="<?php esc_attr_e( 'Filter by sport', 'elite-sports-connect' ); ?>">
-			<a href="<?php echo esc_url( $current_url ); ?>"
-			   class="esc-filter-bar__pill <?php echo empty( $active_sport ) ? 'is-active' : ''; ?>">
-				<?php esc_html_e( 'All Sports', 'elite-sports-connect' ); ?>
-			</a>
-			<?php foreach ( $sports as $sport ) : ?>
-				<a href="<?php echo esc_url( add_query_arg( 'esc_sport', rawurlencode( $sport ), $current_url ) ); ?>"
-				   class="esc-filter-bar__pill <?php echo ( $active_sport === $sport ) ? 'is-active' : ''; ?>">
-					<?php echo esc_html( $sport ); ?>
-				</a>
-			<?php endforeach; ?>
+	<?php if ( 'yes' === $atts['sport_filter'] || 'yes' === ( $atts['county_filter'] ?? 'yes' ) ) : ?>
+		<div class="esc-directory__filters">
+			<?php if ( 'yes' === $atts['sport_filter'] ) : ?>
+				<div class="esc-filter-group">
+					<h3 class="esc-filter-group__title"><?php esc_html_e( 'Sport', 'elite-sports-connect' ); ?></h3>
+					<div class="esc-filter-bar" role="navigation" aria-label="<?php esc_attr_e( 'Filter by sport', 'elite-sports-connect' ); ?>">
+						<a href="<?php echo esc_url( $active_county ? add_query_arg( 'esc_county', $active_county, $current_url ) : $current_url ); ?>"
+						   class="esc-filter-bar__pill <?php echo empty( $active_sport ) ? 'is-active' : ''; ?>">
+							<?php esc_html_e( 'All Sports', 'elite-sports-connect' ); ?>
+						</a>
+						<?php foreach ( $sports as $sport ) : ?>
+							<a href="<?php echo esc_url( add_query_arg( array_filter( [ 'esc_sport' => $sport, 'esc_county' => $active_county ?: null ] ), $current_url ) ); ?>"
+							   class="esc-filter-bar__pill <?php echo ( $active_sport === $sport ) ? 'is-active' : ''; ?>">
+								<?php echo esc_html( $sport ); ?>
+							</a>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			<?php endif; ?>
+
+			<?php if ( 'yes' === ( $atts['county_filter'] ?? 'yes' ) ) : ?>
+				<div class="esc-filter-group">
+					<h3 class="esc-filter-group__title"><?php esc_html_e( 'County', 'elite-sports-connect' ); ?></h3>
+					<form class="esc-filter-select" method="get" action="<?php echo esc_url( $current_url ); ?>">
+						<?php if ( $active_sport ) : ?>
+							<input type="hidden" name="esc_sport" value="<?php echo esc_attr( $active_sport ); ?>">
+						<?php endif; ?>
+						<label class="screen-reader-text" for="esc-directory-county"><?php esc_html_e( 'Filter by county', 'elite-sports-connect' ); ?></label>
+						<select id="esc-directory-county" name="esc_county" class="esc-filter-select__control" onchange="this.form.submit()">
+							<option value=""><?php esc_html_e( 'All Counties', 'elite-sports-connect' ); ?></option>
+						<?php foreach ( $counties as $county ) : ?>
+							<option value="<?php echo esc_attr( $county ); ?>" <?php selected( $active_county, $county ); ?>><?php echo esc_html( $county ); ?></option>
+						<?php endforeach; ?>
+						</select>
+						<button type="submit" class="esc-btn esc-btn--ghost esc-btn--sm"><?php esc_html_e( 'Filter', 'elite-sports-connect' ); ?></button>
+					</form>
+				</div>
+			<?php endif; ?>
 		</div>
 	<?php endif; ?>
 
@@ -226,12 +253,13 @@ $show_contact  = ( 'no' !== ( $atts['show_contact'] ?? 'yes' ) );
 			<svg class="esc-empty-state__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 16.318A4.486 4.486 0 0012.016 15a4.486 4.486 0 00-3.198 1.318M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
 			<h3 class="esc-empty-state__title"><?php esc_html_e( 'No coaches found', 'elite-sports-connect' ); ?></h3>
 			<p class="esc-empty-state__text">
-				<?php if ( $active_sport ) : ?>
+				<?php if ( $active_sport || $active_county ) : ?>
 					<?php
+					$active_parts = array_filter( [ $active_sport, $active_county ] );
 					printf(
-						/* translators: sport name */
-						esc_html__( 'There are currently no coaches listed for %s. Try selecting a different sport or browsing all coaches.', 'elite-sports-connect' ),
-						'<strong>' . esc_html( $active_sport ) . '</strong>'
+						/* translators: active filter names */
+						esc_html__( 'There are currently no coaches listed for %s. Try selecting different filters or browsing all coaches.', 'elite-sports-connect' ),
+						'<strong>' . esc_html( implode( ' / ', $active_parts ) ) . '</strong>'
 					);
 					?>
 					<br><br>

@@ -691,12 +691,60 @@
   margin: 0;
 }
 
+.esc-directory__filters {
+  display: grid;
+  gap: 22px;
+  margin-bottom: 36px;
+}
+
+.esc-filter-group__title {
+  font-size: 0.78rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--esc-text-muted) !important;
+  margin: 0 0 10px !important;
+}
+
+.esc-filter-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 460px;
+}
+
+.esc-filter-select__control {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 40px 0 14px;
+  border: 1.5px solid var(--esc-border);
+  border-radius: var(--esc-radius-sm);
+  background: var(--esc-white);
+  color: var(--esc-text);
+  font-family: var(--esc-font);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.esc-filter-select__control:focus {
+  border-color: var(--esc-amber);
+  box-shadow: 0 0 0 3px rgba(244, 161, 0, 0.18);
+  outline: none;
+}
+
+@media (max-width: 520px) {
+  .esc-filter-select {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
 /* ─── Filter Bar ─────────────────────────────────────────────────────────────── */
 .esc-filter-bar {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 36px;
+  margin-bottom: 0;
 }
 
 .esc-filter-bar__pill {

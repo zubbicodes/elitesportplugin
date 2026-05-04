@@ -128,8 +128,18 @@ class ESC_CPT {
 				<td><input type="text" id="esc_phone" name="esc_phone" value="<?php echo esc_attr( $fields['phone'] ); ?>" class="regular-text"></td>
 			</tr>
 			<tr>
-				<th><label for="esc_location"><?php esc_html_e( 'Location / City', 'elite-sports-connect' ); ?></label></th>
-				<td><input type="text" id="esc_location" name="esc_location" value="<?php echo esc_attr( $fields['location'] ); ?>" class="regular-text"></td>
+				<th><label for="esc_location"><?php esc_html_e( 'County', 'elite-sports-connect' ); ?></label></th>
+				<td>
+					<select id="esc_location" name="esc_location">
+						<option value=""><?php esc_html_e( 'Select County', 'elite-sports-connect' ); ?></option>
+						<?php if ( $fields['location'] && ! in_array( $fields['location'], ESC_Forms::get_counties_list(), true ) ) : ?>
+							<option value="<?php echo esc_attr( $fields['location'] ); ?>" selected><?php echo esc_html( $fields['location'] ); ?></option>
+						<?php endif; ?>
+						<?php foreach ( ESC_Forms::get_counties_list() as $county ) : ?>
+							<option value="<?php echo esc_attr( $county ); ?>" <?php selected( $fields['location'], $county ); ?>><?php echo esc_html( $county ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<th><label for="esc_postal_code"><?php esc_html_e( 'Postal Code', 'elite-sports-connect' ); ?></label></th>
@@ -179,8 +189,18 @@ class ESC_CPT {
 				<td><input type="text" id="esc_s_phone" name="esc_s_phone" value="<?php echo esc_attr( $fields['phone'] ); ?>" class="regular-text"></td>
 			</tr>
 			<tr>
-				<th><label for="esc_s_location"><?php esc_html_e( 'Location / City', 'elite-sports-connect' ); ?></label></th>
-				<td><input type="text" id="esc_s_location" name="esc_s_location" value="<?php echo esc_attr( $fields['location'] ); ?>" class="regular-text"></td>
+				<th><label for="esc_s_location"><?php esc_html_e( 'County', 'elite-sports-connect' ); ?></label></th>
+				<td>
+					<select id="esc_s_location" name="esc_s_location">
+						<option value=""><?php esc_html_e( 'Select County', 'elite-sports-connect' ); ?></option>
+						<?php if ( $fields['location'] && ! in_array( $fields['location'], ESC_Forms::get_counties_list(), true ) ) : ?>
+							<option value="<?php echo esc_attr( $fields['location'] ); ?>" selected><?php echo esc_html( $fields['location'] ); ?></option>
+						<?php endif; ?>
+						<?php foreach ( ESC_Forms::get_counties_list() as $county ) : ?>
+							<option value="<?php echo esc_attr( $county ); ?>" <?php selected( $fields['location'], $county ); ?>><?php echo esc_html( $county ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<th><label for="esc_s_sport"><?php esc_html_e( 'Preferred Sport', 'elite-sports-connect' ); ?></label></th>
@@ -286,7 +306,7 @@ class ESC_CPT {
 			'title'      => __( 'Coach Name',       'elite-sports-connect' ),
 			'esc_sport'  => __( 'Sport',             'elite-sports-connect' ),
 			'esc_exp'    => __( 'Experience',        'elite-sports-connect' ),
-			'esc_loc'    => __( 'Location',          'elite-sports-connect' ),
+			'esc_loc'    => __( 'County',            'elite-sports-connect' ),
 			'esc_email'  => __( 'Email',             'elite-sports-connect' ),
 			'date'       => __( 'Submitted',         'elite-sports-connect' ),
 		];
@@ -315,7 +335,7 @@ class ESC_CPT {
 			'cb'              => $columns['cb'],
 			'title'           => __( 'Student Name',     'elite-sports-connect' ),
 			'esc_s_sport'     => __( 'Preferred Sport',  'elite-sports-connect' ),
-			'esc_s_location'  => __( 'Location',         'elite-sports-connect' ),
+			'esc_s_location'  => __( 'County',           'elite-sports-connect' ),
 			'esc_s_email'     => __( 'Email',            'elite-sports-connect' ),
 			'esc_s_phone'     => __( 'Phone',            'elite-sports-connect' ),
 			'date'            => __( 'Submitted',        'elite-sports-connect' ),
@@ -393,7 +413,7 @@ class ESC_CPT {
 		$output = fopen( 'php://output', 'w' );
 
 		if ( 'coach' === $post_type ) {
-			fputcsv( $output, [ 'Name', 'Email', 'Phone', 'Location', 'Postal Code', 'Sport', 'Experience', 'Website', 'Status', 'Submitted' ] );
+			fputcsv( $output, [ 'Name', 'Email', 'Phone', 'County', 'Postal Code', 'Sport', 'Experience', 'Website', 'Status', 'Submitted' ] );
 			foreach ( $posts as $post ) {
 				$meta = self::get_coach_meta( $post->ID );
 				fputcsv( $output, [
@@ -410,7 +430,7 @@ class ESC_CPT {
 				] );
 			}
 		} else {
-			fputcsv( $output, [ 'Name', 'Email', 'Phone', 'Location', 'Preferred Sport', 'Looking For', 'Status', 'Submitted' ] );
+			fputcsv( $output, [ 'Name', 'Email', 'Phone', 'County', 'Preferred Sport', 'Looking For', 'Status', 'Submitted' ] );
 			foreach ( $posts as $post ) {
 				$meta = self::get_student_meta( $post->ID );
 				fputcsv( $output, [

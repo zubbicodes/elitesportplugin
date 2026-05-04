@@ -46,6 +46,7 @@ class ESC_Settings {
 		register_setting( 'esc_settings_group', 'esc_enable_coach_form', [ 'type' => 'string', 'sanitize_callback' => [ $this, 'sanitize_checkbox' ], 'default' => '1' ] );
 		register_setting( 'esc_settings_group', 'esc_enable_student_form', [ 'type' => 'string', 'sanitize_callback' => [ $this, 'sanitize_checkbox' ], 'default' => '1' ] );
 		register_setting( 'esc_settings_group', 'esc_sports_list', [ 'type' => 'array', 'sanitize_callback' => [ $this, 'sanitize_sports_list' ], 'default' => ESC_Forms::get_default_sports_list() ] );
+		register_setting( 'esc_settings_group', 'esc_counties_list', [ 'type' => 'array', 'sanitize_callback' => [ $this, 'sanitize_counties_list' ], 'default' => ESC_Forms::get_default_counties_list() ] );
 
 		add_settings_section(
 			'esc_form_settings',
@@ -57,6 +58,7 @@ class ESC_Settings {
 		add_settings_field( 'esc_enable_coach_form', __( 'Coach Application Form', 'elite-sports-connect' ), [ $this, 'render_checkbox_field' ], 'esc-settings', 'esc_form_settings', [ 'id' => 'esc_enable_coach_form', 'label' => __( 'Allow coach applications from the frontend', 'elite-sports-connect' ) ] );
 		add_settings_field( 'esc_enable_student_form', __( 'Student Request Form', 'elite-sports-connect' ), [ $this, 'render_checkbox_field' ], 'esc-settings', 'esc_form_settings', [ 'id' => 'esc_enable_student_form', 'label' => __( 'Allow student requests from the frontend', 'elite-sports-connect' ) ] );
 		add_settings_field( 'esc_sports_list', __( 'Sports List', 'elite-sports-connect' ), [ $this, 'render_sports_field' ], 'esc-settings', 'esc_form_settings', [ 'id' => 'esc_sports_list' ] );
+		add_settings_field( 'esc_counties_list', __( 'Counties List', 'elite-sports-connect' ), [ $this, 'render_counties_field' ], 'esc-settings', 'esc_form_settings', [ 'id' => 'esc_counties_list' ] );
 
 		add_settings_section(
 			'esc_main_settings',
@@ -101,6 +103,16 @@ class ESC_Settings {
 		echo '<p class="description">' . esc_html__( 'Enter one sport per line. These values are used in both frontend forms and the coach directory filter.', 'elite-sports-connect' ) . '</p>';
 	}
 
+	public function render_counties_field( array $args = [] ): void {
+		$counties = get_option( 'esc_counties_list', ESC_Forms::get_default_counties_list() );
+		if ( ! is_array( $counties ) ) {
+			$counties = ESC_Forms::get_default_counties_list();
+		}
+
+		echo '<textarea id="esc_counties_list" name="esc_counties_list" rows="12" class="large-text code">' . esc_textarea( implode( "\n", $counties ) ) . '</textarea>';
+		echo '<p class="description">' . esc_html__( 'Enter one county per line. These values are used in coach/student forms and the coach directory county filter.', 'elite-sports-connect' ) . '</p>';
+	}
+
 	public function render_form_settings_intro(): void {
 		echo '<p>' . esc_html__( 'Control which forms accept new entries and manage the sports available across the plugin.', 'elite-sports-connect' ) . '</p>';
 	}
@@ -123,6 +135,22 @@ class ESC_Settings {
 		$sports = array_values( array_unique( $sports ) );
 
 		return empty( $sports ) ? ESC_Forms::get_default_sports_list() : $sports;
+	}
+
+	public function sanitize_counties_list( $value ): array {
+		$raw_lines = is_array( $value ) ? $value : preg_split( '/\r\n|\r|\n/', (string) $value );
+		$counties  = [];
+
+		foreach ( $raw_lines as $line ) {
+			$county = sanitize_text_field( $line );
+			if ( '' !== $county ) {
+				$counties[] = $county;
+			}
+		}
+
+		$counties = array_values( array_unique( $counties ) );
+
+		return empty( $counties ) ? ESC_Forms::get_default_counties_list() : $counties;
 	}
 
 	public function render_settings_page(): void {
